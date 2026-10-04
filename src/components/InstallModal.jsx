@@ -1,21 +1,27 @@
 import { useState, useEffect } from 'react';
-import { Download, Share, PlusSquare, X } from 'lucide-react';
+import { Download, Share, PlusSquare, X, MoreVertical, CheckCircle2 } from 'lucide-react';
 
 export default function InstallModal({ deferredPrompt, onClose }) {
   const [isIOS, setIsIOS] = useState(false);
+  const [showAndroidManualHelp, setShowAndroidManualHelp] = useState(false);
 
+  // Detecto si el dispositivo móvil es iOS (iPhone / iPad) o Android
   useEffect(() => {
     const userAgent = window.navigator.userAgent.toLowerCase();
     const isIosDevice = /iphone|ipad|ipod/.test(userAgent);
     setIsIOS(isIosDevice);
   }, []);
 
+  // Manejo la instalación nativa en dispositivos Android
   const handleInstallAndroid = async () => {
     if (deferredPrompt) {
       deferredPrompt.prompt();
       const { outcome } = await deferredPrompt.userChoice;
-      console.log('User response to install:', outcome);
+      console.log('Respuesta del usuario al diálogo de instalación:', outcome);
       onClose();
+    } else {
+      // Si el navegador aún no preparó el evento automático, le muestro los pasos manuales de Chrome
+      setShowAndroidManualHelp(true);
     }
   };
 
@@ -36,10 +42,10 @@ export default function InstallModal({ deferredPrompt, onClose }) {
     }}>
       <div style={{
         background: '#151e36',
-        border: '1px solid rgba(255, 255, 255, 0.12)',
+        border: '1.5px solid rgba(217, 33, 33, 0.45)',
         borderRadius: '24px',
         width: '100%',
-        maxWidth: '400px',
+        maxWidth: '410px',
         padding: '24px',
         color: '#fff',
         position: 'relative',
@@ -61,7 +67,7 @@ export default function InstallModal({ deferredPrompt, onClose }) {
         </button>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: '14px', marginBottom: '16px' }}>
-          <img src="/assets/logo.png" alt="Logo" style={{ width: 44, height: 44, borderRadius: '12px' }} />
+          <img src="/assets/icon_192.png" alt="Logo" style={{ width: 44, height: 44, borderRadius: '12px' }} />
           <div>
             <h3 style={{ fontSize: '17px', fontWeight: 600 }}>Instalar ControlEDU</h3>
             <p style={{ fontSize: '13px', color: '#9aa5c4' }}>Universidad Alvart</p>
@@ -69,7 +75,8 @@ export default function InstallModal({ deferredPrompt, onClose }) {
         </div>
 
         {isIOS ? (
-          <div style={{ fontSize: '14px', lineHeight: 1.6, color: '#cfd7eb' }}>
+          // Instrucciones específicas para iPhone (Safari)
+          <div style={{ fontSize: '13.5px', lineHeight: 1.6, color: '#cfd7eb' }}>
             <p style={{ marginBottom: '12px' }}>
               Para instalar en tu <strong>iPhone</strong>:
             </p>
@@ -87,18 +94,43 @@ export default function InstallModal({ deferredPrompt, onClose }) {
             </div>
           </div>
         ) : (
+          // Instrucciones y botón para Android (Google Chrome)
           <div>
-            <p style={{ fontSize: '14px', color: '#cfd7eb', marginBottom: '18px' }}>
-              Instala esta aplicación en tu teléfono Android para acceder a tus calificaciones y horarios sin conexión.
+            <p style={{ fontSize: '13px', color: '#cfd7eb', marginBottom: '16px', lineHeight: 1.45 }}>
+              Instala la app en tu teléfono Android para recibir notificaciones de tareas y consultar tus materias sin abrir el navegador.
             </p>
+
             <button
               onClick={handleInstallAndroid}
               className="btn-primary"
-              style={{ width: '100%' }}
+              style={{ width: '100%', marginBottom: '14px', padding: '13px 18px', fontSize: '14px' }}
             >
               <Download size={18} />
-              Instalar en este dispositivo
+              <span>Instalar en este dispositivo</span>
             </button>
+
+            {/* Guía alternativa si el navegador requiere instalación desde el menú de 3 puntos */}
+            <div style={{
+              background: 'rgba(255, 255, 255, 0.04)',
+              border: '1px solid rgba(255, 255, 255, 0.08)',
+              borderRadius: '14px',
+              padding: '12px 14px',
+              fontSize: '12.5px',
+              color: '#9aa5c4',
+              lineHeight: 1.45
+            }}>
+              <strong style={{ color: '#fff', display: 'block', marginBottom: '6px' }}>
+                O instálala directamente desde Chrome:
+              </strong>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
+                <MoreVertical size={16} color="#2f80ed" />
+                <span>1. Toca los <strong>tres puntos (⋮)</strong> arriba a la derecha en Chrome.</span>
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <CheckCircle2 size={16} color="#34c759" />
+                <span>2. Pulsa <strong>"Instalar aplicación"</strong> o <strong>"Agregar a pantalla principal"</strong>.</span>
+              </div>
+            </div>
           </div>
         )}
       </div>

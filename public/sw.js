@@ -1,11 +1,13 @@
 // Defino el nombre y versión de mi memoria caché para la PWA
-const CACHE_NAME = 'controledu-pwa-v4';
+const CACHE_NAME = 'controledu-pwa-v5';
 
 // Lista de archivos estáticos esenciales que guardo en caché para que la app cargue de inmediato
 const ASSETS_TO_CACHE = [
   '/',
   '/index.html',
   '/manifest.json',
+  '/assets/icon_192.png',
+  '/assets/icon_512.png',
   '/assets/app_icon.png',
   '/assets/logo.png',
   '/assets/lion_alvart_v2.png',
